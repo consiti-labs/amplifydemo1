@@ -6,10 +6,25 @@ import { createTodo } from './graphql/mutations';
 import { listTodos } from './graphql/queries';
 import { type CreateTodoInput, type Todo } from './API';
 
+import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+
+import { type AuthUser } from "aws-amplify/auth";
+import { type UseAuthenticator } from "@aws-amplify/ui-react-core";
+
+
 const initialState: CreateTodoInput = { name: '', description: '' };
 const client = generateClient();
 
-const App = () => {
+type AppProps = {
+  signOut?: UseAuthenticator["signOut"]; //() => void;
+  user?: AuthUser;
+};
+
+
+
+//const App = () => {
+const App: React.FC<AppProps> = ({ signOut, user }) => {
   const [formState, setFormState] = useState<CreateTodoInput>(initialState);
   const [todos, setTodos] = useState<Todo[] | CreateTodoInput[]>([]);
 
@@ -45,7 +60,7 @@ const App = () => {
       console.log('error creating todo:', err);
     }
   }
-
+/*
   return (
     <div style={styles.container}>
       <h2>Amplify Todos</h2>
@@ -75,7 +90,17 @@ const App = () => {
         </div>
       ))}
     </div>
-  );
+  );*/
+  
+  return (
+  <div style={styles.container}>
+    <Heading level={1}>Hello {user.username}</Heading>
+    <Button onClick={signOut}>Sign out</Button>
+    <h2>Amplify Todos</h2>
+    ...
+  </div>
+);
+
 };
 
 const styles = {
@@ -106,5 +131,6 @@ const styles = {
   },
 } as const;
 
-export default App;
+//export default App;
+export default withAuthenticator(App);
 
